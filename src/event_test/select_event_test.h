@@ -1,0 +1,1 @@
+extern int select_event_test(int argc,char * argv[]);

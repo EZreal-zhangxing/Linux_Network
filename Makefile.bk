@@ -1,0 +1,21 @@
+DIR = $(shell pwd)
+PATHS=./src ./src/add ./src/sub
+
+OBJS = $(foreach PATH,$(PATHS),$(DIR)/$(wildcard $(PATH)/*.cpp))
+
+TARGET = $(patsubst %.cpp,%.o,$(OBJS))
+TARGETDIR = $(DIR)/build
+CFLAGS = -Wall -Iinclude -O2 -g
+RM = rm -f
+
+main:$(TARGET)
+	$(CXX) -o $@ $(wildcard $(TARGETDIR)/*.o) $(CFLAGS)
+	mv $@ $(TARGETDIR)
+
+$(TARGET):%.o:%.cpp
+	$(CXX) -o $@ -c $^ $(CFLAGS)
+	mv $@ $(TARGETDIR)
+	
+
+clean:
+	-$(RM) $(TARGETDIR)/*
