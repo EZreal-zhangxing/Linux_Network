@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/zhangxing/workspace/socket/include
+CXX_INCLUDES = -I/home/zhangxing/workspace/Linux_Network/include
 
 CXX_FLAGS = -Wall -O2 -g -std=gnu++11
 

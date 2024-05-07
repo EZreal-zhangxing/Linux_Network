@@ -1,9 +1,10 @@
 CMakeFiles/main.dir/src/cal.cpp.o: \
- /home/zhangxing/workspace/socket/src/cal.cpp /usr/include/stdc-predef.h \
- /home/zhangxing/workspace/socket/src/../include/add_int.h \
- /home/zhangxing/workspace/socket/src/../include/add_float.h \
- /home/zhangxing/workspace/socket/src/../include/sub_int.h \
- /home/zhangxing/workspace/socket/src/../include/sub_float.h \
+ /home/zhangxing/workspace/Linux_Network/src/cal.cpp \
+ /usr/include/stdc-predef.h \
+ /home/zhangxing/workspace/Linux_Network/src/../include/add_int.h \
+ /home/zhangxing/workspace/Linux_Network/src/../include/add_float.h \
+ /home/zhangxing/workspace/Linux_Network/src/../include/sub_int.h \
+ /home/zhangxing/workspace/Linux_Network/src/../include/sub_float.h \
  /usr/include/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \

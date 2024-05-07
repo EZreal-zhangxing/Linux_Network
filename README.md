@@ -430,6 +430,8 @@ ssize_t read(int fd,void * buf,size_t count);
 ssize_t write(int fd,const void * buf,size_t count);
 ```
 
+**标准输入输出分别对应文件描述符为`0`和`1`。可以通过`read,write`函数直接读写。**
+
 #### 3.1.5 lseek函数
 该函数的作用是将文件开始读取的位置进行偏移指定的字节数
 
@@ -522,6 +524,8 @@ int ioctl(int d,int request,...)
 ```
 
 一般而言对于设备的操作我们都通过`ioctl`函数来进行操控，例如：使`CDROM`弹仓等
+
+
 
 ## 4.进程和线程
 
@@ -878,6 +882,7 @@ int sem_destroy(sem_t * sem)
 
 ### 7.1 通用套接字数据结构
 ```c
+#include <sys/socket.h>
 typedef	unsigned short sa_family_t;
 struct sockaddr{
 	sa_family_t sa_family;  	/*协议族*/
@@ -888,6 +893,7 @@ struct sockaddr{
 
 ### 7.2 实际使用的套接字数据结构
 ```c
+#include <netinet/in.h>
 struct sockaddr_in{
 	u8				sin-len;			/*结构sockaddr_in的长度*/
 	u8				sin_family;			/*协议族*/
@@ -942,7 +948,7 @@ int socket(int domain,int type,int protocol)
 3. `PF_PACKET`:底层包协议
 4. `AF_UNIX`：本地通讯
 
-第二个参数设置套接字的通讯类型，例如TCP(`SOCK_STREAM`)或者UDP(`SOCK_DGRAM`),原始网络协议访问(`SOCK_RAW`)，第三个参数和第二个参数有关。
+第二个参数设置套接字的通讯类型，例如TCP(`SOCK_STREAM`)或者UDP(`SOCK_DGRAM`),原始网络协议访问(`SOCK_RAW`)，第三个参数和第二个参数有关,通常用于指定通讯类型中的某一个特别的协议类型。但是一般一个通讯类型对应一个协议类型，所以一般为0。如果有多个通讯协议可以指定不一样的值。
 
 #### 2.bind函数
 

@@ -1,5 +1,5 @@
 CMakeFiles/main.dir/src/signal_test/sampleSocket.cpp.o: \
- /home/zhangxing/workspace/socket/src/signal_test/sampleSocket.cpp \
+ /home/zhangxing/workspace/Linux_Network/src/signal_test/sampleSocket.cpp \
  /usr/include/stdc-predef.h /usr/include/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -26,12 +26,12 @@ CMakeFiles/main.dir/src/signal_test/sampleSocket.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
  /usr/include/x86_64-linux-gnu/bits/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
- /home/zhangxing/workspace/socket/include/self_string.h \
- /home/zhangxing/workspace/socket/include/add_float.h \
- /home/zhangxing/workspace/socket/include/add_int.h \
- /home/zhangxing/workspace/socket/include/sub_float.h \
- /home/zhangxing/workspace/socket/include/sub_int.h \
- /home/zhangxing/workspace/socket/include/file_test.h \
+ /home/zhangxing/workspace/Linux_Network/include/self_string.h \
+ /home/zhangxing/workspace/Linux_Network/include/add_float.h \
+ /home/zhangxing/workspace/Linux_Network/include/add_int.h \
+ /home/zhangxing/workspace/Linux_Network/include/sub_float.h \
+ /home/zhangxing/workspace/Linux_Network/include/sub_int.h \
+ /home/zhangxing/workspace/Linux_Network/include/file_test.h \
  /usr/include/signal.h \
  /usr/include/x86_64-linux-gnu/bits/signum-generic.h \
  /usr/include/x86_64-linux-gnu/bits/signum-arch.h \

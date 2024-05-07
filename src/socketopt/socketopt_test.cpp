@@ -117,7 +117,10 @@ void * connect_test(void *){
 
 void test_socket(){
     pthread_t service,client;
-
+    long a=10;
+    short b = 10;
+    printf("sizeof long %d \n",sizeof(a));
+    printf("sizeof short %d \n",sizeof(b));
     signal(SIGINT,signal_p);
 
     pthread_create(&service,NULL,service_test,NULL);
