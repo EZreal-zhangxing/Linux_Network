@@ -3,6 +3,7 @@
 #include "file_test/file_test.h"
 #include "pipe_connect/pipe_test.h"
 #include "pthread_test/pthread_mutex_test.h"
+#include "TCP_test/tcp_test.h"
 
 int main(int argc,char * argv[]){
     // select_event_test(argc,argv);
@@ -12,6 +13,7 @@ int main(int argc,char * argv[]){
     // pipe_write_read();
     // thread_test();
     // sem_test();
-    test_socket();
+    // test_socket();
+    test_tcp_connect();
     return 0;
 }
