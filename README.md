@@ -1025,3 +1025,76 @@ int close(int __fd);
 2. `SHUT_WR`：值为1,关闭写
 3. `SHUT_RDWR`:值为2,关闭读写，该状态同`close`函数
 
+## 8.服务器和客户端的信息获取
+
+### 8.1字节序
+
+计算机字节序更具 地址高位存储数值高字节位还是低字节位分为了 小端字节序和大端字节序 见[TCP/IP](#5-tcpip协议) 因此对于字节的网络传输 提出了网络字节序，以及`long`和`short`基础类型的转换函数：
+1. `htonl`:`long`类型本地转网络字节序,`ntohl`:`long`类型网络转本地字节序
+2. `htons`:`short`类型本地转网络字节序,`ntohs`:`short`类型网络转本地字节序
+
+### 8.2字符串IP地址和二进制IP地址的转换
+地址转换函数都在如下的头文件里：
+
+```c
+#include<arpa/inet.h>
+```
+
+1. `inet_aton(const char * cp,struct in_addr * inp)`函数，用于将**点分十进制**地址转换成`in_addr`**地址结构体**。并返回
+2. `inet_addr`：将**点分十进制**转换成网路字节序的**二进制**，返回`in_addr_t`结构体。注：对于`255.255.255.255`地址转换的结果和函数报错的返回结果相同都是`-1`。因此该函数不能用于对`255.255.255.255`的地址转换
+3. `inet_network`:将**点分十进制字符串**转换成网络字节序的**二进制地址**，返回`in_addr_t`结构体。对于完整的点分十进制(`a.b.c.d`)该函数同`inet_addr`,对于非完整的点分十进制(`a.b.c`,`a.b`,`a`)，除了最后一位值以外，其他的值都会作为正常的地址进行解析，最后一位值会补充剩余的地址位数。
+4. `inet_ntoa`:用于将一个`in_addr`**结构体**转换成点分**十进制字符串**，该函数返回一个字符串指针，该地址指向的地址为静态区域，注：确保该块地址内容已经拷贝或者使用。并且避免多线程使用
+5. `inet_makeaddr`:将二进制的网络段和主机段地址合成一个二进制的地址`in_addr`
+6. `inet_lnaof`:返回二进制地址的主机部分。输入输出都是`in_addr`
+7. `inet_netof`:返回二进制地址的网络部分，输入输出都是`in_addr`
+
+上述七个函数中主要分为两类，分别是二进制转字符和字符转二进制
+1. 字符转二进制的函数有：`inet_aton`,`inet_addr`,`inet_network`
+2. 二进制转字符的函数有：`inet_ntoa`,
+3. 二进制转二进制：`inet_makeaddr`,`inet_lnaof`,`inet_netof`
+
+#### 8.2.1 协议无关的地址转换
+
+可以根据协议进行地址转换，并且函数是安全的。
+1. `inet_pton(int af,const char * src,void * dst)`:将字符串地址`src`更具协议类型`af`转换成二进制`dst`
+2. `inet_ntop(int af,const void * src,char * dst,socklen_t cnt)`:将二进制地址`src`更具协议`af`转换成字符串`dst`
+
+### 8.3 主机IP和域名的转换（DNS）
+
+主要是更具主机名或者主机IP请求DNS服务器获取主机信息
+
+#### 8.3.1 根据名称获取主机信息
+```c
+#include<netdb.h>
+struct hostent * gethostbyname(const char * name)
+```
+该函数更具主机域名`name`返回一个指向`hostent`的指针，如果发生错误则返回`NULL`,错误信息可以从`errno`中获取
+
+```c
+/* Description of data base entry for a single host.  */
+struct hostent
+{
+  char *h_name;			/* Official name of host.  主机官方名称*/
+  char **h_aliases;		/* Alias list.  别名列表*/
+  int h_addrtype;		/* Host address type.  主机地址类型*/
+  int h_length;			/* Length of address.  地址长度*/
+  char **h_addr_list;		/* List of addresses from name server.  地址列表*/
+#ifdef __USE_MISC
+# define	h_addr	h_addr_list[0] /* Address, for backward compatibility.*/
+#endif
+};
+```
+
+在`hostent`结构体中，主机别名`h_aliases`和主机地址列表`h_addr_list`都是链表结构
+
+#### 8.3.2 根据IP地址获取主机信息
+
+```c
+#include<netdb.h>
+#include<sys/socket.h>
+struct hostent * gethostbyaddr(const void * addr,int len,int type)
+```
+
+该函数的返回数据结构通上，传入的是`addr`的二进制地址结构。
+
+注：`hostent*`指向的内存结构是不可重入的，因此在保证使用完毕之前不能再次进入，以免破坏数据。该块地址是公用的静态地址。

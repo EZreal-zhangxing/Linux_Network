@@ -101,3 +101,5 @@ void test_tcp_connect(){
 
     printf("test tcp connect exit \n");
 }
+
+#include<netdb.h>
