@@ -1,0 +1,1 @@
+extern void dns_test_method();

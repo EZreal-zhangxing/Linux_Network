@@ -4,6 +4,7 @@
 #include "pipe_connect/pipe_test.h"
 #include "pthread_test/pthread_mutex_test.h"
 #include "TCP_test/tcp_test.h"
+#include "dns_test/dns_test.h"
 
 int main(int argc,char * argv[]){
     // select_event_test(argc,argv);
@@ -14,6 +15,7 @@ int main(int argc,char * argv[]){
     // thread_test();
     // sem_test();
     // test_socket();
-    test_tcp_connect();
+    // test_tcp_connect();
+    dns_test_method();
     return 0;
 }

@@ -225,6 +225,30 @@ src/cal.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/cal.cpp.s
 .PHONY : src/cal.cpp.s
 
+src/dns_test/dns_test.o: src/dns_test/dns_test.cpp.o
+.PHONY : src/dns_test/dns_test.o
+
+# target to build an object file
+src/dns_test/dns_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/dns_test/dns_test.cpp.o
+.PHONY : src/dns_test/dns_test.cpp.o
+
+src/dns_test/dns_test.i: src/dns_test/dns_test.cpp.i
+.PHONY : src/dns_test/dns_test.i
+
+# target to preprocess a source file
+src/dns_test/dns_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/dns_test/dns_test.cpp.i
+.PHONY : src/dns_test/dns_test.cpp.i
+
+src/dns_test/dns_test.s: src/dns_test/dns_test.cpp.s
+.PHONY : src/dns_test/dns_test.s
+
+# target to generate assembly for a file
+src/dns_test/dns_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/dns_test/dns_test.cpp.s
+.PHONY : src/dns_test/dns_test.cpp.s
+
 src/event_test/select_event_test.o: src/event_test/select_event_test.cpp.o
 .PHONY : src/event_test/select_event_test.o
 
@@ -510,6 +534,9 @@ help:
 	@echo "... src/cal.o"
 	@echo "... src/cal.i"
 	@echo "... src/cal.s"
+	@echo "... src/dns_test/dns_test.o"
+	@echo "... src/dns_test/dns_test.i"
+	@echo "... src/dns_test/dns_test.s"
 	@echo "... src/event_test/select_event_test.o"
 	@echo "... src/event_test/select_event_test.i"
 	@echo "... src/event_test/select_event_test.s"

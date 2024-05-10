@@ -7,6 +7,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/main.dir/src/add/add_int.cpp.o.d"
   "CMakeFiles/main.dir/src/cal.cpp.o"
   "CMakeFiles/main.dir/src/cal.cpp.o.d"
+  "CMakeFiles/main.dir/src/dns_test/dns_test.cpp.o"
+  "CMakeFiles/main.dir/src/dns_test/dns_test.cpp.o.d"
   "CMakeFiles/main.dir/src/event_test/select_event_test.cpp.o"
   "CMakeFiles/main.dir/src/event_test/select_event_test.cpp.o.d"
   "CMakeFiles/main.dir/src/file_test/file_test.cpp.o"
