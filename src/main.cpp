@@ -5,6 +5,7 @@
 #include "pthread_test/pthread_mutex_test.h"
 #include "TCP_test/tcp_test.h"
 #include "dns_test/dns_test.h"
+#include "msg_send_recv/msg_send_recv_test.h"
 
 int main(int argc,char * argv[]){
     // select_event_test(argc,argv);
@@ -16,6 +17,7 @@ int main(int argc,char * argv[]){
     // sem_test();
     // test_socket();
     // test_tcp_connect();
-    dns_test_method();
+    // dns_test_method();
+    send_recv_test();
     return 0;
 }

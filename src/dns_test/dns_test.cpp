@@ -24,7 +24,7 @@ void print_host_ent(hostent * ent){
 }
 
 void dns_test_method(){
-    char hostAddrs[] ="www.baidu.com";
+    char hostAddrs[] ="cn.bing.com";
     hostent *ent;
     ent = gethostbyname(hostAddrs);
     print_host_ent(ent);

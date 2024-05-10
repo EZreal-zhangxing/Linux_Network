@@ -54,8 +54,12 @@ void *tcp_service(void *){
         bzero(&clientAddr,socketlen);
         int ssc = accept(ss,(sockaddr *)&clientAddr,&socketlen);
         printf("[%s] connect success \n",inet_ntoa(clientAddr.sin_addr));
-
-        res = read(ssc,buffer,1024);
+        ssize_t canrecv =  recv(ssc,buffer,100,MSG_PEEK);
+        printf("can read bytes %ld \n",canrecv);
+        for(int i=0;i<4;i++){
+            res = read(ssc,buffer+5*i,5);
+        }
+        
         if(res < 0){
             printf("recive failed %d %s \n",errno,strerror(errno));
         }else{
@@ -71,7 +75,7 @@ void *tcp_client(void * index){
     int res = 0;
     sc = socket(AF_INET,SOCK_STREAM,0);
     char buffer[1024]="";
-    sprintf(buffer,"%s %d","Hello from client",*(int *)(index));
+    sprintf(buffer,"%s %d","Hello_from_client",*(int *)(index));
     sockaddr_in serviceAddr;
     bzero(&serviceAddr,sizeof(sockaddr_in));
     serviceAddr.sin_family = AF_INET;
@@ -81,7 +85,10 @@ void *tcp_client(void * index){
     if(res != 0){
         printf("connect service failed: %s \n",strerror(errno));
     }else{
-        write(sc,buffer,1024);
+        for(int i=0;i<2;i++){
+            write(sc,buffer+i*10,12);
+        }
+        
     }
     close(sc);
     return 0;

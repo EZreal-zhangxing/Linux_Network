@@ -321,6 +321,30 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/msg_send_recv/msg_send_recv_test.o: src/msg_send_recv/msg_send_recv_test.cpp.o
+.PHONY : src/msg_send_recv/msg_send_recv_test.o
+
+# target to build an object file
+src/msg_send_recv/msg_send_recv_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/msg_send_recv/msg_send_recv_test.cpp.o
+.PHONY : src/msg_send_recv/msg_send_recv_test.cpp.o
+
+src/msg_send_recv/msg_send_recv_test.i: src/msg_send_recv/msg_send_recv_test.cpp.i
+.PHONY : src/msg_send_recv/msg_send_recv_test.i
+
+# target to preprocess a source file
+src/msg_send_recv/msg_send_recv_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/msg_send_recv/msg_send_recv_test.cpp.i
+.PHONY : src/msg_send_recv/msg_send_recv_test.cpp.i
+
+src/msg_send_recv/msg_send_recv_test.s: src/msg_send_recv/msg_send_recv_test.cpp.s
+.PHONY : src/msg_send_recv/msg_send_recv_test.s
+
+# target to generate assembly for a file
+src/msg_send_recv/msg_send_recv_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/msg_send_recv/msg_send_recv_test.cpp.s
+.PHONY : src/msg_send_recv/msg_send_recv_test.cpp.s
+
 src/pipe_connect/pipe_test.o: src/pipe_connect/pipe_test.cpp.o
 .PHONY : src/pipe_connect/pipe_test.o
 
@@ -546,6 +570,9 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/msg_send_recv/msg_send_recv_test.o"
+	@echo "... src/msg_send_recv/msg_send_recv_test.i"
+	@echo "... src/msg_send_recv/msg_send_recv_test.s"
 	@echo "... src/pipe_connect/pipe_test.o"
 	@echo "... src/pipe_connect/pipe_test.i"
 	@echo "... src/pipe_connect/pipe_test.s"

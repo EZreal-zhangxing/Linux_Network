@@ -1049,15 +1049,15 @@ int close(int __fd);
 7. `inet_netof`:返回二进制地址的网络部分，输入输出都是`in_addr`
 
 上述七个函数中主要分为两类，分别是二进制转字符和字符转二进制
-1. 字符转二进制的函数有：`inet_aton`,`inet_addr`,`inet_network`
+1. 字符转二进制的函数有：`inet_aton`,`inet_addr`,`inet_network`,其中后两个函数转换成网络序。
 2. 二进制转字符的函数有：`inet_ntoa`,
 3. 二进制转二进制：`inet_makeaddr`,`inet_lnaof`,`inet_netof`
 
 #### 8.2.1 协议无关的地址转换
 
 可以根据协议进行地址转换，并且函数是安全的。
-1. `inet_pton(int af,const char * src,void * dst)`:将字符串地址`src`更具协议类型`af`转换成二进制`dst`
-2. `inet_ntop(int af,const void * src,char * dst,socklen_t cnt)`:将二进制地址`src`更具协议`af`转换成字符串`dst`
+1. `int inet_pton(int af,const char * src,void * dst)`:将字符串地址`src`更具协议类型`af`转换成二进制`dst`,转换出错返回-1
+2. `const char * inet_ntop(int af,const void * src,char * dst,socklen_t cnt)`:将二进制地址`src`更具协议`af`转换成字符串`dst`,如果转换出错则返回空指针。
 
 ### 8.3 主机IP和域名的转换（DNS）
 
@@ -1098,3 +1098,134 @@ struct hostent * gethostbyaddr(const void * addr,int len,int type)
 该函数的返回数据结构通上，传入的是`addr`的二进制地址结构。
 
 注：`hostent*`指向的内存结构是不可重入的，因此在保证使用完毕之前不能再次进入，以免破坏数据。该块地址是公用的静态地址。
+
+### 8.4 协议处理函数
+
+该系列提供了一套协议值的查询函数，该函数主要查询`/etc/protocols`中列出来的所有协议。
+```c
+#include<netdb.h>
+struct protoent * getprotoent(void); /*读取协议文件的一行，以结构体返回*/
+struct protoent * getprotobyname(const char * name); /*根据名称查询协议*/
+struct protoent * getprotobynumber(int proto); /*根据协议ID查询协议*/
+void setprotoent(int stayopen); /*设置协议打开模式*/
+void endprotoent(void); /*关闭协议文件*/
+```
+
+可以通过上述三个查询接口查询协议的信息，同时注意`setprotoent(1)`函数可以避免在每次查询后自动关闭协议文件。
+
+
+## 9. 数据的IO和复用
+
+### 9.1 IO函数
+
+除了利用文件操作的读写函数对套接字进行操作外(`read,write`)。还能使用`recv,send,recvmsg,sendmsg,readv,writev`等IO函数进行处理
+
+#### 9.1.1 recv函数
+该函数原型如下：
+```c
+#include<sys/types.h>
+#include<sys/socket.h>
+ssize_t recv(int s,void * buf,size_t len,int flags)
+```
+
+该函数可以通过`flags`所指定的方法来从套接字中读取数据，写入`buf`中。`flags`有如下几个值：
+![Alt text](./images/recv_flags.png)
+
+1. `MSG_DONTWAIT`：该标志将单个IO设置使用非阻塞的方法读取数据，而不用设置套接字的非阻塞属性
+2. `MSG_OOB`：可以接受带外数据
+3. `MSG_PEEK`：查看可读取的数据
+4. `MSG_TRUNC`：截取数据，只保留缓存区大小的数据。
+5. `MSG_WAITALL`:等待并读取缓存区大小的数据。
+
+该函数的返回值是读取的数据大小。
+
+面对有连接协议TCP，我们一般使用`recv`来读取数据，面对无连接的协议`UDP`一般使用`recvfrom`，在`recvfrom`中可以获取对端的地址。同时也可以将套接字绑定一个地址，使用`recv`函数来获取UDP的数据包
+
+`recv`函数每次都会读取指定大小`len`长度的数据到缓存区，如果到来的数据大于缓存区长度，则也会读取一部分(`len`大小)，剩余的等待下次读取。同时会销毁内核中已经读取的数据。
+
+如果内核的数据比缓存区小的化，在未设置`WAITALL`标志时，会将内核所有数据复制到缓存区，并返回复制数据的大小。
+
+#### 9.1.2 send函数
+
+```c
+#include<sys/types.h>
+#include<sys/socket.h>
+ssize_t send(int s,const void *buf,size_t len,int flags)
+```
+同样，该函数相比较与`write`函数，可以指定写入的方式`flags`，该`flags`的值同`recv`,其他过程都类似。当`flags=0`时该函数和`write`函数完全一致。
+
+**注：在发送结束和接受结束后一定要注意统计发送和接受的字节数**
+
+#### 9.1.3 readv函数
+从向量中读取数据，这里向量是多个缓存区的意思。
+
+```c
+#include<sys/uio.h>
+ssize_t readv(int s,const struct iovec * vector ,int count)
+```
+从套接字中读取`count`块的数据到`vector`中。该块的数据结构如下：
+```c
+struct iovec{
+	void *	iov_base;
+	size_t  iov_len;
+}
+```
+该数据结构中一定要指明`iov_base`的长度`iov_len`
+
+#### 9.1.3 writev函数
+将向量发送出去。
+
+```c
+#include<sys/uio.h>
+ssize_t writev(int fd,const struct iovec * vector ,int count)
+```
+将`vector`中的`count`块的数据通过套接字发送出去。
+
+该函数配合`readv`进行多路缓存区的读写，提高IO复用。
+
+#### 9.1.4 recvmsg，sendmsg函数
+
+该两种函数主要以结构体`msghdr`为载体发送数据。
+
+```c
+struct msghdr{
+	void *msg_name;		/* Address to send to/receive from. 指向struct sockaddr */
+    socklen_t msg_namelen;	/* Length of address data.  */
+
+    struct iovec *msg_iov;	/* Vector of data to send/receive into.  */
+    size_t msg_iovlen;		/* Number of elements in the vector.  */
+
+    void *msg_control;		/* Ancillary data (eg BSD filedesc passing). */
+    size_t msg_controllen;	/* Ancillary data buffer length. */
+
+    int msg_flags;		/* Flags on received message.  */
+}
+
+#include<sys/types.h>
+#include<sys/socket.h>
+ssize_t recvmsg(int s,struct msghdr * msg,int flags);
+#include<sys/uio.h>
+ssize_t sendmsg(int s,const struct msghdr * msg,int flags);
+```
+可以看到`msghdr`将地址结构`sockaddr`和多缓存向量`iovec`合成了一整个数据结构。`recvmsg`在接受数据时，将对端的地址写入`msg_name`中，`msg_namelen=16`，然后将数据信息按照向量的格式写入`msg_iov`中，并设置对应的向量数`msg_iovlen`
+
+`recvmsg`和`sendmsg`函数的`flags`与[上述](#911-recv函数)中介绍的一样。
+
+
+在上述介绍的几个函数中，可以总结出如下规律
+1. `read`和`write`,`readv`和`writev`可以对任意文件描述符进行操作
+2. `recvfrom`和`sendto`,`recvmsg`和`sendmsg`可以指定目的地址
+
+#### 9.1.5 recv/send 函数测试
+在代码[msg_send_recv_test.cpp](./src/msg_send_recv/msg_send_recv_test.cpp)中，接收端通过`DONTWAIT`标识不进行等待的时候，会不进行等待，即使套接字没有数据（Resource temporarily unavailable）。因此接收端一般需要使用阻塞模式去读取。避免非阻塞模式下CPU的占用
+
+使用阻塞模式可以更具返回值来判断套接字里是否有数据，当发送端套接字里的数据发送完毕后，接收端即使是阻塞模式，进行读取时也会返回0.
+
+**当发送的数据比接收端缓存区小时，接受区的`recv`函数会返回实际读取的大小。当发送的数据大与接受区缓存区的时候，会按照缓存区所读取的总字节数返回。**
+
+#### 9.1.6 readv/writev 函数测试
+
+在[msg_send_recv_test.cpp:readv_test](./src/msg_send_recv/msg_send_recv_test.cpp) 和[msg_send_recv_test.cpp:writev_test](./src/msg_send_recv/msg_send_recv_test.cpp)中，**主要要注意的就是`iovec`的内存在接受段和发送端都需要优先分配好。并设置好长度。**
+
+除了对每个向量使用动态分配外，还能动态分配一整块内存，让每个向量进行划分。
+
