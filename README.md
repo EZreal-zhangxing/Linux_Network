@@ -1229,3 +1229,85 @@ ssize_t sendmsg(int s,const struct msghdr * msg,int flags);
 
 除了对每个向量使用动态分配外，还能动态分配一整块内存，让每个向量进行划分。
 
+### 9.2 IO模型
+IO模型分为阻塞和非阻塞模型两种，阻塞模型会一直等待数据的到来，才会返回。而非阻塞模型则会直接返回。
+
+#### 9.2.1 IO复用
+
+因此为了避免这两个极端，有两种折中的方案，其中一种是：让进程阻塞指定时间等待数据，超时后返回。该代表函数就是`select`
+
+通过`select`函数可以轮询等待指定时间的数据，如果有数据则通过`rec/read`等方法读取，如果在等待时间内没有数据到达则返回。
+
+#### 9.2.2 信号驱动型IO
+第二种就是通过信号来进行处理，系统轮询捕获数据到来的信号`SIGIO`，等待数据到达时，系统发送信号`SIGIO`，由程序捕获该信号进行对应的收发处理。
+
+#### 9.2.3 异步IO
+
+除了在信号到来时发送信号给信号处理函数，也可以在数据复制完成后，发送信号给处理函数，这就是异步IO
+
+### 9.3 select和pselect函数
+
+IO复用函数，用于监控多个描述符，看是否满足指定的监听事件。
+
+#### select函数
+
+该函数原型如下：
+```c
+#include<sys/select.h>
+#include<sys/time.h>
+#include<sys/types.h>
+#include<unistd.h>
+int select(int nfds,fd_set * readfds,fd_set * writefds,fd_set * exceptfds,struct timeavl * timeout)
+```
+1. `nfds`:是描述符集合中最大值+1
+2. `readfds`:是可读描述符集合，函数返回时，该集合中仅包含可读的文件描述符
+3. `writefds`:可写文件描述符集合
+4. `exceptfds`:是否发生错误的文件描述符
+5. `timeout`:等待超时时间，`NULL`表示阻塞，`0`时表示非阻塞
+
+该函数的返回值是0,-1,或者正数。0表示超时，-1表示发生错误，正数表示三个集合中存在符合的描述符
+
+**该函数能同时监听多个文件描述符或者套接字，当有一个或者多个描述符准备就绪时函数就会返回。**
+
+该函数同时针对三种不同的事件进行监听：可读，可写，发生异常。
+
+`timeout`的数据结构存在于`sys/time.h`头文件中：
+```c
+struct timeavl{
+	time_t tv_sec;  	/*秒*/
+	long   tv_usec; 	/*微秒*/
+}
+```
+
+对于上诉三个描述符集合，还提供了一系列的宏函数进行集合操作：
+1. `FD_ZERO()`：清空描述符集合
+2. `FD_SET()`: 向`fd_set`中加入某个文件描述符
+3. `FD_CLR()`: 从`fd_set`中删除某个文件描述符
+4. `FD_ISSET()`: 测试某个文加描述符是否存在与集合中
+
+#### pselect函数
+
+该函数与`select`函数相似,函数原型如下：
+```c
+#include<sys/select.h>
+#include<sys/time.h>
+#include<sys/types.h>
+#include<unistd.h>
+int pselect(int nfds,fd_set * readfds,fd_set * writefds,fd_set * exceptfds,struct timespec * timeout,const sigset_t * sigmask)
+```
+该函数的不同点在于`struct timespec`结构体，该结构体如下：
+```c
+struct timespec{
+	long   tv_sec;  	/*秒*/
+	long   tv_nsec; 	/*纳秒*/
+}
+```
+以及多了一个`sigset_t`值。该值设置了信号处理方式。当为`NULL`时 该函数与`select`等价。
+
+最后一个信号掩码弥补了`select`函数执行过程中无法捕获内核信号的问题。见[page](https://tubetrue01.github.io/articles/2020/12/17/c_unix/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8(%E4%BA%8C)pselect%E5%87%BD%E6%95%B0/)
+
+`select`函数在进入阻塞状态时，这时候是无法处理内核抛出的信号的。因此`pselect`引入了信号掩码的参数。
+
+可以在信号掩码中加入我们想要捕获的信号，在函数进行处理的过程中同样能够捕获到对应的信号。进入信号处理函数。避免了函数阻塞时无法响应内核的情况。
+
+设置信号掩码的流程是：先保存原始信号，并在原始信号上加入想要捕获的信号，然后设定修改后的信号掩码。处理完成后，没
