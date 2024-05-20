@@ -1249,7 +1249,7 @@ IO模型分为阻塞和非阻塞模型两种，阻塞模型会一直等待数据
 
 IO复用函数，用于监控多个描述符，看是否满足指定的监听事件。
 
-#### select函数
+#### 9.3.1 select函数
 
 该函数原型如下：
 ```c
@@ -1285,7 +1285,7 @@ struct timeavl{
 3. `FD_CLR()`: 从`fd_set`中删除某个文件描述符
 4. `FD_ISSET()`: 测试某个文加描述符是否存在与集合中
 
-#### pselect函数
+#### 9.3.2 pselect函数
 
 该函数与`select`函数相似,函数原型如下：
 ```c
@@ -1310,4 +1310,80 @@ struct timespec{
 
 可以在信号掩码中加入我们想要捕获的信号，在函数进行处理的过程中同样能够捕获到对应的信号。进入信号处理函数。避免了函数阻塞时无法响应内核的情况。
 
-设置信号掩码的流程是：先保存原始信号，并在原始信号上加入想要捕获的信号，然后设定修改后的信号掩码。处理完成后，没
+设置信号掩码的流程是：先保存原始信号，并在原始信号上加入想要捕获的信号，然后设定修改后的信号掩码。处理完成后，恢复原始信号。
+
+### 9.4 poll和ppoll函数
+
+该套函数用来监听套接字上发生的动作（事件），当满足动作或者超时会退出返回。
+
+#### 9.4.1 poll函数
+
+该函数原型:
+```c
+#include<poll.h>
+int poll(struct pollfd * fds,nfds_t nfds, int timeout);
+```
+参数`fds`是一个指向结构体`struct pollfd`的指针，该结构体结构如下：
+```c
+struct pollfd
+{
+int fd;			/* File descriptor to poll.  */
+short int events;		/* Types of events poller cares about.  */
+short int revents;		/* Types of events that actually occurred.  */
+};
+```
+
+该结构体包含了监听的文件描述符，要监听的事件，以及实际发生的事件，事件取值如下：
+
+![Alt text](./images/event_image.png)
+
+`nfds`是一个比监视的描述符大1的值，同`select\pselect`函数一样
+
+`timeout`是一个单位为`ms`的等待时间，当`timeout=-1`时表示一直等待。
+
+该函数返回值大于`0`时表示等待的某个条件满足，并返回满足条件的文件描述符的数量。如果等于`0`表示超时，等于`-1`时表示有错误发生，可以在`errno`中查看错误。
+
+#### 9.4.2 ppoll函数
+
+同`select/pselect`函数的区别一致，`ppoll`函数相比较与`poll`函数等待的时间为纳秒级，并且可以挂接信号掩码。
+
+```c
+#include<poll.h>
+int ppoll(struct pollfd * fds,nfds_t nfds,const struct timespec* timeout ,const sigset_t * sigmask);
+```
+
+### 9.5 非阻塞式编程
+
+在上述[recv函数](#911-recv函数)中，除了利用设置非阻塞式进行数据读取，还能通过设置套接字描述符的属性，完成非阻塞的通讯。
+
+```c
+fcntl(s,F_SETFL,O_NONBLOCK)
+```
+
+## 10 UDP编程
+
+与`TCP`编程流程不一样的地方在于，在服务器端不需要设置`listen`监听队列，以及`accept`等待接受信息。只需要通过带目的地址的收发函数进行数据的发送即可`recvfrom/sendto`
+
+### 10.1.1 函数介绍
+
+`recvfrom`函数原型如下：
+```c
+#include<sys/types.h>
+#include<sys/socket.h>
+ssize_t recvfrom(int s,void * buf,size_t len,int flags, struct sockaddr* from, socklet_t* fromlen)
+```
+与[recv](#911-recv函数)相比，多了一个地址结构和地址长度信息。
+
+函数执行出错时返回`-1`，成功时返回接受的数据长度。错误信息同样可以在`errno`中看到
+
+`sendto`函数原型：
+```c
+#include<sys/types.h>
+#include<sys/socket.h>
+ssize_t sendto(int s,void * buf,size_t len,int flags, struct sockaddr* to, socklet_t* tolen)
+```
+
+相似的，与`send`函数相比，多了一个地址结构和地址长度。
+
+函数执行成功返回发送字节数，执行失败时返回`-1`,错误信息见`errno`
+

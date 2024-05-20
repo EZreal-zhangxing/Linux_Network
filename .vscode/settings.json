@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "internet": "cpp"
+        "internet": "cpp",
+        "map": "cpp"
     }
 }

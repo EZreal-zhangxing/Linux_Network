@@ -417,6 +417,30 @@ src/pthread_test/semaphore_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/pthread_test/semaphore_test.cpp.s
 .PHONY : src/pthread_test/semaphore_test.cpp.s
 
+src/select_test/select_test.o: src/select_test/select_test.cpp.o
+.PHONY : src/select_test/select_test.o
+
+# target to build an object file
+src/select_test/select_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/select_test/select_test.cpp.o
+.PHONY : src/select_test/select_test.cpp.o
+
+src/select_test/select_test.i: src/select_test/select_test.cpp.i
+.PHONY : src/select_test/select_test.i
+
+# target to preprocess a source file
+src/select_test/select_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/select_test/select_test.cpp.i
+.PHONY : src/select_test/select_test.cpp.i
+
+src/select_test/select_test.s: src/select_test/select_test.cpp.s
+.PHONY : src/select_test/select_test.s
+
+# target to generate assembly for a file
+src/select_test/select_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/select_test/select_test.cpp.s
+.PHONY : src/select_test/select_test.cpp.s
+
 src/signal_test/sampleSocket.o: src/signal_test/sampleSocket.cpp.o
 .PHONY : src/signal_test/sampleSocket.o
 
@@ -537,6 +561,30 @@ src/sub/sub_int.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/sub/sub_int.cpp.s
 .PHONY : src/sub/sub_int.cpp.s
 
+src/udp_test/udp_test.o: src/udp_test/udp_test.cpp.o
+.PHONY : src/udp_test/udp_test.o
+
+# target to build an object file
+src/udp_test/udp_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/udp_test/udp_test.cpp.o
+.PHONY : src/udp_test/udp_test.cpp.o
+
+src/udp_test/udp_test.i: src/udp_test/udp_test.cpp.i
+.PHONY : src/udp_test/udp_test.i
+
+# target to preprocess a source file
+src/udp_test/udp_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/udp_test/udp_test.cpp.i
+.PHONY : src/udp_test/udp_test.cpp.i
+
+src/udp_test/udp_test.s: src/udp_test/udp_test.cpp.s
+.PHONY : src/udp_test/udp_test.s
+
+# target to generate assembly for a file
+src/udp_test/udp_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/udp_test/udp_test.cpp.s
+.PHONY : src/udp_test/udp_test.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -582,6 +630,9 @@ help:
 	@echo "... src/pthread_test/semaphore_test.o"
 	@echo "... src/pthread_test/semaphore_test.i"
 	@echo "... src/pthread_test/semaphore_test.s"
+	@echo "... src/select_test/select_test.o"
+	@echo "... src/select_test/select_test.i"
+	@echo "... src/select_test/select_test.s"
 	@echo "... src/signal_test/sampleSocket.o"
 	@echo "... src/signal_test/sampleSocket.i"
 	@echo "... src/signal_test/sampleSocket.s"
@@ -597,6 +648,9 @@ help:
 	@echo "... src/sub/sub_int.o"
 	@echo "... src/sub/sub_int.i"
 	@echo "... src/sub/sub_int.s"
+	@echo "... src/udp_test/udp_test.o"
+	@echo "... src/udp_test/udp_test.i"
+	@echo "... src/udp_test/udp_test.s"
 .PHONY : help
 
 

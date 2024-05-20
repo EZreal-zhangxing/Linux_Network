@@ -23,6 +23,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/main.dir/src/pthread_test/pthread_mutex_test.cpp.o.d"
   "CMakeFiles/main.dir/src/pthread_test/semaphore_test.cpp.o"
   "CMakeFiles/main.dir/src/pthread_test/semaphore_test.cpp.o.d"
+  "CMakeFiles/main.dir/src/select_test/select_test.cpp.o"
+  "CMakeFiles/main.dir/src/select_test/select_test.cpp.o.d"
   "CMakeFiles/main.dir/src/signal_test/sampleSocket.cpp.o"
   "CMakeFiles/main.dir/src/signal_test/sampleSocket.cpp.o.d"
   "CMakeFiles/main.dir/src/socketopt/socketopt_test.cpp.o"
@@ -33,6 +35,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/main.dir/src/sub/sub_float.cpp.o.d"
   "CMakeFiles/main.dir/src/sub/sub_int.cpp.o"
   "CMakeFiles/main.dir/src/sub/sub_int.cpp.o.d"
+  "CMakeFiles/main.dir/src/udp_test/udp_test.cpp.o"
+  "CMakeFiles/main.dir/src/udp_test/udp_test.cpp.o.d"
   "main"
   "main.pdb"
 )

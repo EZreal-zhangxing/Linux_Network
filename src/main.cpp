@@ -6,6 +6,7 @@
 #include "TCP_test/tcp_test.h"
 #include "dns_test/dns_test.h"
 #include "msg_send_recv/msg_send_recv_test.h"
+#include "udp_test/udp_test.h"
 
 int main(int argc,char * argv[]){
     // select_event_test(argc,argv);
@@ -18,6 +19,7 @@ int main(int argc,char * argv[]){
     // test_socket();
     // test_tcp_connect();
     // dns_test_method();
-    send_recv_test();
+    // send_recv_test();
+    main_test_udp(argc,argv);
     return 0;
 }
