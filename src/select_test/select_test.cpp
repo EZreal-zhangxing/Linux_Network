@@ -56,6 +56,9 @@ void * service_thread_select(void *){
     if(res != 0){
         printf("listen failed: %s \n",strerror(errno));
     }
+    int client_fds[10],client_nums = 0;
+    memset(client_fds,0,sizeof(client_fds));
+
     fd_set client_set;
     FD_ZERO(&client_set);
     int maxfd = -1;
@@ -68,6 +71,7 @@ void * service_thread_select(void *){
             printf("accept failed : %s \n",strerror(errno));
         }else{
             printf("client connect [%s:%d]\n",inet_ntoa(clientaddrs.sin_addr),htons(clientaddrs.sin_port));
+            client_fds[client_nums++] = ssc;
             FD_SET(ssc,&client_set);
             if(ssc > maxfd){
                 maxfd = ssc;

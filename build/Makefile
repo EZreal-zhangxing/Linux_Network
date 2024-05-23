@@ -201,6 +201,30 @@ src/add/add_int.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/add/add_int.cpp.s
 .PHONY : src/add/add_int.cpp.s
 
+src/broadcast_test/broadcast_test.o: src/broadcast_test/broadcast_test.cpp.o
+.PHONY : src/broadcast_test/broadcast_test.o
+
+# target to build an object file
+src/broadcast_test/broadcast_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/broadcast_test/broadcast_test.cpp.o
+.PHONY : src/broadcast_test/broadcast_test.cpp.o
+
+src/broadcast_test/broadcast_test.i: src/broadcast_test/broadcast_test.cpp.i
+.PHONY : src/broadcast_test/broadcast_test.i
+
+# target to preprocess a source file
+src/broadcast_test/broadcast_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/broadcast_test/broadcast_test.cpp.i
+.PHONY : src/broadcast_test/broadcast_test.cpp.i
+
+src/broadcast_test/broadcast_test.s: src/broadcast_test/broadcast_test.cpp.s
+.PHONY : src/broadcast_test/broadcast_test.s
+
+# target to generate assembly for a file
+src/broadcast_test/broadcast_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/broadcast_test/broadcast_test.cpp.s
+.PHONY : src/broadcast_test/broadcast_test.cpp.s
+
 src/cal.o: src/cal.cpp.o
 .PHONY : src/cal.o
 
@@ -603,6 +627,9 @@ help:
 	@echo "... src/add/add_int.o"
 	@echo "... src/add/add_int.i"
 	@echo "... src/add/add_int.s"
+	@echo "... src/broadcast_test/broadcast_test.o"
+	@echo "... src/broadcast_test/broadcast_test.i"
+	@echo "... src/broadcast_test/broadcast_test.s"
 	@echo "... src/cal.o"
 	@echo "... src/cal.i"
 	@echo "... src/cal.s"

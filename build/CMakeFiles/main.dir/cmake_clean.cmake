@@ -5,6 +5,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/main.dir/src/add/add_float.cpp.o.d"
   "CMakeFiles/main.dir/src/add/add_int.cpp.o"
   "CMakeFiles/main.dir/src/add/add_int.cpp.o.d"
+  "CMakeFiles/main.dir/src/broadcast_test/broadcast_test.cpp.o"
+  "CMakeFiles/main.dir/src/broadcast_test/broadcast_test.cpp.o.d"
   "CMakeFiles/main.dir/src/cal.cpp.o"
   "CMakeFiles/main.dir/src/cal.cpp.o.d"
   "CMakeFiles/main.dir/src/dns_test/dns_test.cpp.o"

@@ -1285,6 +1285,8 @@ struct timeavl{
 3. `FD_CLR()`: 从`fd_set`中删除某个文件描述符
 4. `FD_ISSET()`: 测试某个文加描述符是否存在与集合中
 
+整体流程是，使用`select`函数等待符合监听事件的到来，同时记录连接的套接字描述符。通过`FD_ISSET`函数将套接字符和`select`返回满足条件的套接字符进行比较，如果在里面说面已经满足读写或者错误等对应条件。然后对该套接字进行对应的处理。
+
 #### 9.3.2 pselect函数
 
 该函数与`select`函数相似,函数原型如下：
@@ -1387,3 +1389,90 @@ ssize_t sendto(int s,void * buf,size_t len,int flags, struct sockaddr* to, sockl
 
 函数执行成功返回发送字节数，执行失败时返回`-1`,错误信息见`errno`
 
+使用`UDP`发送数据包时要注意如下几点：
+1. 数据包丢失的问题，解决方法：发送确认，超时重发
+2. 数据包错序的问题，解决方法：发送端加入数据包序号，按序号拼接
+
+在`UDP`发送过程中一般不使用`connect`函数创建连接，但其实可以使用该函数将发送端和服务器端进行绑定，但是绑定之后就不能使用`sendto/recvfrom`函数来进行发送和接受。要使用`write/read`来操作套接字。
+
+## 11 高级套接字/组播/广播
+
+### 11.1 UNIX域
+
+**该套使用`UNIX`的协议进行通讯，主要是面向同一台机器上的客户端和服务器通讯使用。**
+
+该套协议使用方式同传统套接字，也分为两种类型的套接字：字节流和数据报，分别类似于TCP/UDP
+
+该套协议的优点：在同一台机器上进行通讯时，相比较与TCP套接字具有更高的传输速度；可以在不同的进程之间传递套接字；
+
+不同点：该套协议使用文件路径作为地址
+
+地址结构`sockaddr_un`，在头文件`sys/un.h`中，如下:
+```c
+#define UNIX_PATH_MAX 108
+
+struct sockaddr_un{
+	sa_family_t sun_family;
+	char sun_path[UNIX_PATH_MAX]
+}
+```
+
+该套协议套接字和普通网络套接字区别点：
+1. 使用`bind`函数进行地址绑定时，绑定的文件权限默认为0777
+2. 地址结构中的`sun_path`路径必须是一个绝对路径
+3. `connect`连接地址中的路径必须存在并且已经被打开，并且类型相符。
+4. 字节流类型的提供可靠连接
+5. 数据报类型的提供不可靠的数据服务
+
+#### 11.1.2 文件描述符的传递
+
+套接字对建立函数`socketpair`，该函数可以用于建立一个匿名的套接字对，该套接字对可以用于数据的传递，并且每个套接字都可以继续读写。
+
+```c
+#include<sys/types.h>
+#include<sys/socket.h>
+int socketpair(int d,int type,int protocol,int sv[2])
+```
+该函数的第一个参数`d`表示协议族，只能为`AF_LOCAL`或者`AF_UNIX`，第二个表示类型只能为`0`，第三个参数表示协议`SOCK_STREAM`或者`SOCK_DGRAM`协议，其中使用`SOCK_STREAM`建立的套接字对是管道流，可以双端进行读写。
+
+### 11.2 广播
+
+进行广播发送时，与点对点不同的是广播只能使用`UDP`协议进行发送报文。
+
+主要区别如下：
+
+1. 通过`ioctl`函数获取指定网卡的广播地址信息，返回到地址结构`struct ifreq`中，如果已知广播地址可以忽略，但是要确保广播地址存在于某张网卡的地址上。
+该数据结构在`net/if.h`头文件中：
+```c
+#define IF_NAMESIZE	16
+struct ifreq
+  {
+# define IFHWADDRLEN	6
+# define IFNAMSIZ	IF_NAMESIZE
+    union
+      {
+		char ifrn_name[IFNAMSIZ];	/* Interface name, e.g. "en0".  */
+      } ifr_ifrn;
+
+    union
+      {
+		struct sockaddr ifru_addr;  		/* 网卡IP */
+		struct sockaddr ifru_dstaddr;		/* 网卡目标地址IP */
+		struct sockaddr ifru_broadaddr;		/* 网卡广播地址 */
+		struct sockaddr ifru_netmask;		/* 网卡掩码 */
+		struct sockaddr ifru_hwaddr;		/* 硬件(MAC)地址 */
+		short int ifru_flags;				/* 标志 */
+		int ifru_ivalue;					/*  */
+		int ifru_mtu;						/* MTU */
+		struct ifmap ifru_map;				/* 网卡的映射情况 */
+		char ifru_slave[IFNAMSIZ];	/* Just fits the size */
+		char ifru_newname[IFNAMSIZ];
+		__caddr_t ifru_data;
+      } ifr_ifru;
+  };
+```
+分别获取该信息对应的请求指令见387页
+
+2. 通过`setsockopt`函数设置该套接字可以发送广播
+3. 根据第一步获取的广播地址封装发送地址和端口号。
+4. 通过`UDP`的发送方法发送广播包。
