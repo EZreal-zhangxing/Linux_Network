@@ -369,6 +369,30 @@ src/msg_send_recv/msg_send_recv_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/msg_send_recv/msg_send_recv_test.cpp.s
 .PHONY : src/msg_send_recv/msg_send_recv_test.cpp.s
 
+src/multicast_test/multicast_test.o: src/multicast_test/multicast_test.cpp.o
+.PHONY : src/multicast_test/multicast_test.o
+
+# target to build an object file
+src/multicast_test/multicast_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/multicast_test/multicast_test.cpp.o
+.PHONY : src/multicast_test/multicast_test.cpp.o
+
+src/multicast_test/multicast_test.i: src/multicast_test/multicast_test.cpp.i
+.PHONY : src/multicast_test/multicast_test.i
+
+# target to preprocess a source file
+src/multicast_test/multicast_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/multicast_test/multicast_test.cpp.i
+.PHONY : src/multicast_test/multicast_test.cpp.i
+
+src/multicast_test/multicast_test.s: src/multicast_test/multicast_test.cpp.s
+.PHONY : src/multicast_test/multicast_test.s
+
+# target to generate assembly for a file
+src/multicast_test/multicast_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/multicast_test/multicast_test.cpp.s
+.PHONY : src/multicast_test/multicast_test.cpp.s
+
 src/pipe_connect/pipe_test.o: src/pipe_connect/pipe_test.cpp.o
 .PHONY : src/pipe_connect/pipe_test.o
 
@@ -648,6 +672,9 @@ help:
 	@echo "... src/msg_send_recv/msg_send_recv_test.o"
 	@echo "... src/msg_send_recv/msg_send_recv_test.i"
 	@echo "... src/msg_send_recv/msg_send_recv_test.s"
+	@echo "... src/multicast_test/multicast_test.o"
+	@echo "... src/multicast_test/multicast_test.i"
+	@echo "... src/multicast_test/multicast_test.s"
 	@echo "... src/pipe_connect/pipe_test.o"
 	@echo "... src/pipe_connect/pipe_test.i"
 	@echo "... src/pipe_connect/pipe_test.s"

@@ -19,6 +19,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/main.dir/src/main.cpp.o.d"
   "CMakeFiles/main.dir/src/msg_send_recv/msg_send_recv_test.cpp.o"
   "CMakeFiles/main.dir/src/msg_send_recv/msg_send_recv_test.cpp.o.d"
+  "CMakeFiles/main.dir/src/multicast_test/multicast_test.cpp.o"
+  "CMakeFiles/main.dir/src/multicast_test/multicast_test.cpp.o.d"
   "CMakeFiles/main.dir/src/pipe_connect/pipe_test.cpp.o"
   "CMakeFiles/main.dir/src/pipe_connect/pipe_test.cpp.o.d"
   "CMakeFiles/main.dir/src/pthread_test/pthread_mutex_test.cpp.o"

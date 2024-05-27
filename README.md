@@ -1476,3 +1476,42 @@ struct ifreq
 2. 通过`setsockopt`函数设置该套接字可以发送广播
 3. 根据第一步获取的广播地址封装发送地址和端口号。
 4. 通过`UDP`的发送方法发送广播包。
+
+### 11.3 多播/组播
+
+组播程序同广播程序一样，需要通过`setsockopt`函数来设置套接字的特殊属性。
+
+该函数原型如下：
+```c
+#include<sys/socket.h>
+extern int setsockopt (int __fd, int __level, int __optname,const void *__optval, socklen_t __optlen);
+```
+
+1. 第一个参数`fd`表示：套接字描述符，
+2. 第二个为设置的级别，在广播样例中设置的级别是：`SOL_SOCKET`,而多播中和IP协议相关的在`IPPROTO_IP`级别
+3. 第三个参数是操作，对于组播主要有如下几个操作：更多操作见`bits/in.h`头文件
+![Alt text](./images/multicast_image.png)
+4. 第四个参数是操作对应的值
+5. 第五个参数是值的大小
+
+加组和退组的值结构是`struct ip_mreq`,该数据结构在`netinet/in.h`头文件中
+```c
+struct ip_mreq
+{
+	/* IP multicast address of group.  */
+	/* 加组的组播地址 */
+	struct in_addr imr_multiaddr;
+
+	/* Local IP address of interface.  */
+	/* 本机IP地址 */
+	struct in_addr imr_interface;
+};
+```
+
+组播的发送流程同一般的`UDP`流程一样，只是接收组播的客户端流程不太一样：
+1. 生成`UDP`套接字
+2. 设置套接字加入组播地址
+3. 读取数据
+4. 退出组播
+   
+
