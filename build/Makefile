@@ -129,6 +129,30 @@ main/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
 .PHONY : main/fast
 
+src/2layer_test/data_link_layer_test.o: src/2layer_test/data_link_layer_test.cpp.o
+.PHONY : src/2layer_test/data_link_layer_test.o
+
+# target to build an object file
+src/2layer_test/data_link_layer_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/2layer_test/data_link_layer_test.cpp.o
+.PHONY : src/2layer_test/data_link_layer_test.cpp.o
+
+src/2layer_test/data_link_layer_test.i: src/2layer_test/data_link_layer_test.cpp.i
+.PHONY : src/2layer_test/data_link_layer_test.i
+
+# target to preprocess a source file
+src/2layer_test/data_link_layer_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/2layer_test/data_link_layer_test.cpp.i
+.PHONY : src/2layer_test/data_link_layer_test.cpp.i
+
+src/2layer_test/data_link_layer_test.s: src/2layer_test/data_link_layer_test.cpp.s
+.PHONY : src/2layer_test/data_link_layer_test.s
+
+# target to generate assembly for a file
+src/2layer_test/data_link_layer_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/2layer_test/data_link_layer_test.cpp.s
+.PHONY : src/2layer_test/data_link_layer_test.cpp.s
+
 src/TCP_test/tcp_test.o: src/TCP_test/tcp_test.cpp.o
 .PHONY : src/TCP_test/tcp_test.o
 
@@ -642,6 +666,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... main"
+	@echo "... src/2layer_test/data_link_layer_test.o"
+	@echo "... src/2layer_test/data_link_layer_test.i"
+	@echo "... src/2layer_test/data_link_layer_test.s"
 	@echo "... src/TCP_test/tcp_test.o"
 	@echo "... src/TCP_test/tcp_test.i"
 	@echo "... src/TCP_test/tcp_test.s"

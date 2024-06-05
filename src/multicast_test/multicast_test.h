@@ -1,1 +1,1 @@
-extern void test_multicast();
+extern void test_multicast(int argc,char * argv[]);

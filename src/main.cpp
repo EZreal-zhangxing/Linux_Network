@@ -9,6 +9,7 @@
 #include "udp_test/udp_test.h"
 #include "broadcast_test/broad_test.h"
 #include "multicast_test/multicast_test.h"
+#include "2layer_test/data_link_layer_test.h"
 
 int main(int argc,char * argv[]){
     // select_event_test(argc,argv);
@@ -24,6 +25,7 @@ int main(int argc,char * argv[]){
     // send_recv_test();
     // main_test_udp(argc,argv);
     // broad_send_test();
-    test_multicast();
+    // test_multicast(argc,argv);
+    capture_dataLink_data(argv);
     return 0;
 }
