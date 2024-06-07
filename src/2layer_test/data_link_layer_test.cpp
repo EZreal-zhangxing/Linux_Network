@@ -9,6 +9,7 @@
 #include<netinet/in.h>
 #include<netinet/if_ether.h>
 #include<netinet/ip.h>
+#include<net/if_arp.h>
 
 #include<netpacket/packet.h> // sockaddr_ll 设备无关物理地址结构
 #include<unistd.h>
@@ -69,12 +70,22 @@ void capture_dataLink_data(char ** argv){
                 printf("%02x:",ethhd->h_dest[i]);
             }
             printf(" proto : %04x ",ntohs(ethhd->h_proto));
-            if(ntohs(ethhd->h_proto) == 0x0800){
+            if(ntohs(ethhd->h_proto) == ETH_P_IP){
                 iphdr * iphd = (iphdr *)(buf + ETH_HLEN);
                 // printf("%x %x \n",iphd->saddr,iphd->daddr);
                 unsigned long saddr = (iphd->saddr);
                 unsigned long daddr = (iphd->daddr);
-                printf("ip src %s ip dst %s \n",inet_ntoa(*((in_addr *)&saddr)),inet_ntoa(*((in_addr *)&daddr)));
+
+                printf("ip src %s ip dst %s ",inet_ntoa(*((in_addr *)&saddr)),inet_ntoa(*((in_addr *)&daddr)));
+                if(iphd->protocol == IPPROTO_TCP){
+                    printf(" TCP \n");
+                }else if(iphd->protocol == IPPROTO_UDP){
+                    printf(" UDP \n");
+                }else if(iphd->protocol == IPPROTO_ICMP){
+                    printf(" ICMG \n");
+                }else if(iphd->protocol == IPPROTO_IGMP){
+                    printf(" IGMP \n");
+                }
             }else{
                 printf("\n");
             }

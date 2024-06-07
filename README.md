@@ -1534,6 +1534,153 @@ struct ip_mreq
 
 对于网卡的设置，同获取网卡的信息流程一样，通过`ioctl`函数来进行对应的设置。对应的控制指令为`SIOCSIFFLAGS/SIOCGIFFLAGS`。先获取网卡的标识位，然后添加标识位，然后设置标识位。
 
+设置标识位后，就可以通过`read`函数读取出对应的数据
+
 #### 11.4.1 数据链路层的报文结构
 
-与网卡信息数据结构不同的是，该数据结构在`netinet/if_ether.h`头文件的`linux/if_ether.h`中。
+与网卡信息数据结构不同的是，数据链路层的报文头数据结构在`netinet/if_ether.h`头文件的`linux/if_ether.h`中。
+```c
+#define ETH_ALEN	6		/* Octets in one ethernet addr	 */
+#define ETH_TLEN	2		/* Octets in ethernet type field */
+struct ethhdr {
+	unsigned char	h_dest[ETH_ALEN];	/* destination eth addr	*/
+	unsigned char	h_source[ETH_ALEN];	/* source ether addr	*/
+	__be16		h_proto;		/* packet type ID field	*/
+} __attribute__((packed));
+```
+
+该报文头结构包含一个目标MAC地址，一个源MAC地址，一个协议字段。
+
+协议字段表明了该报文三层结构里是什么协议。找出对应的协议使用对应的报文头进行解析即可。
+
+该协议字段在：头文件`linux/if_ether.h`中，其中常用的协议有:
+```c
+#define ETH_P_IP	0x0800		/* Internet Protocol packet	IPV4报文 */ 
+#define ETH_P_ARP	0x0806		/* Address Resolution packet	ARP地址解析协议*/
+#define ETH_P_IPV6	0x86DD		/* IPv6 over bluebook		IV6报文*/
+```
+对于`IP`数据包，可以在头文件`netinet/ip.h`中找到对应的`IP`数据报文头的数据结构`iphdr`
+
+```c
+struct iphdr
+  {
+#if __BYTE_ORDER == __LITTLE_ENDIAN
+    unsigned int ihl:4; 				/* IP报文头头部偏移量,以4字节为单位 */
+    unsigned int version:4;
+#elif __BYTE_ORDER == __BIG_ENDIAN
+    unsigned int version:4;
+    unsigned int ihl:4;
+#else
+# error	"Please fix <bits/endian.h>"
+#endif
+    uint8_t tos;
+    uint16_t tot_len;
+    uint16_t id;
+    uint16_t frag_off;
+    uint8_t ttl;
+    uint8_t protocol;
+    uint16_t check;
+    uint32_t saddr;
+    uint32_t daddr;
+    /*The options start here. */
+  };
+```
+
+通过该`IP`数据报文头的`protocol`可以解析出这是对应的`TCP`报文还是`UDP`报文。这两个协议对应的值可以在头文件`netinet/in.h`中找到。
+```c
+enum
+  {
+    IPPROTO_IP = 0,	   /* Dummy protocol for TCP.  */
+#define IPPROTO_IP		IPPROTO_IP
+    IPPROTO_ICMP = 1,	   /* Internet Control Message Protocol.  */
+#define IPPROTO_ICMP		IPPROTO_ICMP
+    IPPROTO_IGMP = 2,	   /* Internet Group Management Protocol. */
+#define IPPROTO_IGMP		IPPROTO_IGMP
+    IPPROTO_IPIP = 4,	   /* IPIP tunnels (older KA9Q tunnels use 94).  */
+#define IPPROTO_IPIP		IPPROTO_IPIP
+    IPPROTO_TCP = 6,	   /* Transmission Control Protocol.  */
+#define IPPROTO_TCP		IPPROTO_TCP
+    IPPROTO_EGP = 8,	   /* Exterior Gateway Protocol.  */
+#define IPPROTO_EGP		IPPROTO_EGP
+    IPPROTO_PUP = 12,	   /* PUP protocol.  */
+#define IPPROTO_PUP		IPPROTO_PUP
+    IPPROTO_UDP = 17,	   /* User Datagram Protocol.  */
+#define IPPROTO_UDP		IPPROTO_UDP
+    IPPROTO_IDP = 22,	   /* XNS IDP protocol.  */
+#define IPPROTO_IDP		IPPROTO_IDP
+    IPPROTO_TP = 29,	   /* SO Transport Protocol Class 4.  */
+#define IPPROTO_TP		IPPROTO_TP
+    IPPROTO_DCCP = 33,	   /* Datagram Congestion Control Protocol.  */
+#define IPPROTO_DCCP		IPPROTO_DCCP
+    IPPROTO_IPV6 = 41,     /* IPv6 header.  */
+#define IPPROTO_IPV6		IPPROTO_IPV6
+    IPPROTO_RSVP = 46,	   /* Reservation Protocol.  */
+#define IPPROTO_RSVP		IPPROTO_RSVP
+    IPPROTO_GRE = 47,	   /* General Routing Encapsulation.  */
+#define IPPROTO_GRE		IPPROTO_GRE
+    IPPROTO_ESP = 50,      /* encapsulating security payload.  */
+#define IPPROTO_ESP		IPPROTO_ESP
+    IPPROTO_AH = 51,       /* authentication header.  */
+#define IPPROTO_AH		IPPROTO_AH
+    IPPROTO_MTP = 92,	   /* Multicast Transport Protocol.  */
+#define IPPROTO_MTP		IPPROTO_MTP
+    IPPROTO_BEETPH = 94,   /* IP option pseudo header for BEET.  */
+#define IPPROTO_BEETPH		IPPROTO_BEETPH
+    IPPROTO_ENCAP = 98,	   /* Encapsulation Header.  */
+#define IPPROTO_ENCAP		IPPROTO_ENCAP
+    IPPROTO_PIM = 103,	   /* Protocol Independent Multicast.  */
+#define IPPROTO_PIM		IPPROTO_PIM
+    IPPROTO_COMP = 108,	   /* Compression Header Protocol.  */
+#define IPPROTO_COMP		IPPROTO_COMP
+    IPPROTO_SCTP = 132,	   /* Stream Control Transmission Protocol.  */
+#define IPPROTO_SCTP		IPPROTO_SCTP
+    IPPROTO_UDPLITE = 136, /* UDP-Lite protocol.  */
+#define IPPROTO_UDPLITE		IPPROTO_UDPLITE
+    IPPROTO_MPLS = 137,    /* MPLS in IP.  */
+#define IPPROTO_MPLS		IPPROTO_MPLS
+    IPPROTO_ETHERNET = 143, /* Ethernet-within-IPv6 Encapsulation.  */
+#define IPPROTO_ETHERNET	IPPROTO_ETHERNET
+    IPPROTO_RAW = 255,	   /* Raw IP packets.  */
+#define IPPROTO_RAW		IPPROTO_RAW
+    IPPROTO_MPTCP = 262,   /* Multipath TCP connection.  */
+#define IPPROTO_MPTCP		IPPROTO_MPTCP
+    IPPROTO_MAX
+  };
+```
+
+通过`ihl`字段同样可以算出`IP`报文头的长度。计算出偏移就可以找到`TCP/UDP`协议的起始位置，然后通过分别在`netinet/tcp.h`和`netinet/udp.h`中的 `tcphdr`和`udphdr`两个报文头数据结构，就可以得到该报文的对应信息。
+
+
+综上所述：对于以太网的包文，我们通过以太网的报文头信息`ethhdr`可以解析得到后面报文的类型。并根据对应的类型找到对应的报文头。
+例如`IP`报文头`iphdr`,或者`arp`报文头`arphdr`中的`net/if_arp.h`。
+
+1. 对于`IP`报文而言，可以在`iphdr`报文头中找到该报文承载的协议类型是`TCP/UDP/IGMP/ICMP`等等
+2. 对于`ARP`报文而言，使用报文头解析后，可以根据协议标准找到该报文的具体要求。
+
+同理，我们如果要封装对应的报文信息，只需要反着来就可。
+
+## 12 套接字选项
+
+### 12.1 获取和设置套接字选项
+
+`setsockopt`和`getsockopt`函数。这俩函数在这里面的代码中都使用过，例如使能网卡广播发送功能。组播中加组，退组，组播TTL，指定组播发送网卡等功能。见[11.3](#113-多播组播)
+
+
+协议所在级别主要分三类：通用套接字(`SOL_SOCKET`)，`IP`选项(`IPPROTP_IP`)，`TCP`选项(`IPPROTO_TCP`)
+
+![套接字选项](images/sockopt_image.png)
+
+我们主要使用的功能有如下：
+1. `SOL_SOCKET`:`SO_BROADCAST`，允许广播
+2. `SOL_SOCKET`:`SO_REUSEADDR`，地址重用
+3. `SOL_SOCKET`:`SO_RCVBUF`，接受缓存区大小
+4. `SOL_SOCKET`:`SO_SNDBUF`，发送缓存区大小
+5. `IPPROTO_IP`:`IP_RECVIF`，接受数据的网络接口
+6. `IPPROTO_IP`:`IP_TTL`，IP报文存活时间
+7. `IPPROTO_IP`:`IP_MULTICAST_IF`，组播报文发送接口
+8. `IPPROTO_IP`:`IP_MULTICAST_TTL`，组播发送TTL
+9. `IPPROTO_IP`:`IP_MULTICAST_LOOP`，是否报文转发到回环接口
+10. `IPPROTO_IP`:`IP_ADD_MULTICAST`，加组
+11. `IPPROTO_IP`:`IP_DROP_MULTICAST`，退组
+12. `IPPROTO_TCP`:`TCP_MAXSEG`，最大分片大小
+
